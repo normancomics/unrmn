@@ -23,8 +23,16 @@ export const UNRMN_TOKEN = {
   totalSupply: 10_000,
 }
 
+export const UNRMN_POOL = {
+  address: '0xbc6da14d517949da968bda7cfcad5faa046be2a0' as const,
+  factory: '0xb8300d93f6d127357eef5f6a9ac98f52b64b9366' as const,
+}
+
 export const explorerAddressUrl = (address: string) =>
   `${robinhoodChain.blockExplorers.default.url}/address/${address}`
 
 export const explorerTokenUrl = (address: string) =>
   `${robinhoodChain.blockExplorers.default.url}/token/${address}`
+
+export const explorerTxUrl = (hash: string) =>
+  `${robinhoodChain.blockExplorers.default.url}/tx/${hash}`
