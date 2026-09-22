@@ -16,6 +16,7 @@ import {
   savePreferences,
   type UserPreferences,
 } from '../services/persistence'
+import { reportError, trackEvent } from '../services/telemetry'
 
 interface AppState {
   walletAddress: string | null
@@ -42,14 +43,27 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   async function connect() {
-    const address = await connectWallet()
-    setWalletAddress(address)
-    await refreshWithWallet(address)
+    try {
+      const address = await connectWallet()
+      setWalletAddress(address)
+      trackEvent({ name: 'wallet_connected', payload: { address } })
+      await refreshWithWallet(address)
+    } catch (error) {
+      reportError('wallet_connect', error instanceof Error ? error.message : 'unknown')
+    }
   }
 
   async function refresh() {
     if (!walletAddress) return
-    await refreshWithWallet(walletAddress)
+    try {
+      await refreshWithWallet(walletAddress)
+      trackEvent({ name: 'collector_snapshot_refreshed' })
+    } catch (error) {
+      reportError(
+        'collector_snapshot_refresh',
+        error instanceof Error ? error.message : 'unknown',
+      )
+    }
   }
 
   function addWatchlistSymbol(symbol: string) {
@@ -66,6 +80,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     saveFeedCache(seenFeedIds)
   }, [seenFeedIds])
+
+  useEffect(() => {
+    const onUnhandledError = (event: ErrorEvent) => {
+      reportError('window_error', event.message)
+    }
+
+    window.addEventListener('error', onUnhandledError)
+    return () => window.removeEventListener('error', onUnhandledError)
+  }, [])
 
   const value = useMemo(
     () => ({

@@ -1,32 +1,36 @@
-# React + TypeScript + Vite
+# uNORMAN Collector + Discovery dApp
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Persistent web dApp foundation for uNORMAN on Robinhood Chain with strict trust boundaries:
 
-Currently, two official plugins are available:
+- Wallet-connected collector dashboard
+- NFT gallery and holdings views
+- Yield and bonus informational views (gated until verified)
+- Community feed surface (X, Telegram, onchain seed)
+- Staking and DEX entry points with feature/contract gating
+- Contract/config verification matrix to avoid implying unverified live pools
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Run locally
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Build and lint
+
+```bash
+npm run lint
+npm run build
+```
+
+## Environment flags
+
+Optional Vite environment variables:
+
+- `VITE_APP_ENV` = `development | staging | production`
+- `VITE_ENABLE_MINT` = `true | false`
+- `VITE_ENABLE_STAKING` = `true | false`
+- `VITE_ENABLE_SWAP` = `true | false`
+- `VITE_ENABLE_YIELD` = `true | false`
+
+All transaction-capable surfaces remain gated unless feature flags are enabled and matching contracts are marked as verified.

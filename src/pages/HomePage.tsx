@@ -1,4 +1,4 @@
-import { appConfig } from '../config/appConfig'
+import { appConfig, configValidationIssues } from '../config/appConfig'
 import { ecosystemEndpoints } from '../services/ecosystem'
 
 export function HomePage() {
@@ -49,6 +49,19 @@ export function HomePage() {
             </li>
           ))}
         </ul>
+      </article>
+
+      <article className="card">
+        <h3>Environment readiness checks</h3>
+        {configValidationIssues.length === 0 ? (
+          <p className="status ok">All configured contracts have non-placeholder addresses.</p>
+        ) : (
+          <ul className="list">
+            {configValidationIssues.map((issue) => (
+              <li key={issue}>{issue}</li>
+            ))}
+          </ul>
+        )}
       </article>
     </section>
   )

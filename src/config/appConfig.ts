@@ -70,6 +70,10 @@ export const appConfig = {
       : fallbackContracts,
 }
 
+export const configValidationIssues = appConfig.contracts
+  .filter((contract) => contract.address === '0x0000000000000000000000000000000000000000')
+  .map((contract) => `${contract.label} is not wired`)
+
 export function getContract(key: string) {
   return appConfig.contracts.find((contract) => contract.key === key)
 }
