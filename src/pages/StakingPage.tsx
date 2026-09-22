@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FeatureGate } from '../components/FeatureGate'
 import { UNRMN_TOKEN } from '../config/chain'
 import { hybridAssets } from '../config/campaign'
@@ -6,6 +6,7 @@ import { robinhoodPartners } from '../config/partners'
 import { UNISWAP_V4 } from '../config/uniswap'
 import { lookupRobinhoodToken, type LookedUpToken } from '../services/tokenLookup'
 import { useAppState } from '../state/useAppState'
+import { verifyDualStake, type DualStakeReport } from '../services/dualStakeVerify'
 
 export function StakingPage() {
   const { walletAddress } = useAppState()
@@ -15,13 +16,29 @@ export function StakingPage() {
   const [partnerAmount, setPartnerAmount] = useState('1')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [vaultInput, setVaultInput] = useState('')
+  const [report, setReport] = useState<DualStakeReport | null>(null)
+  const [verifying, setVerifying] = useState(false)
+
+  async function runVerify(addr?: string) {
+    setVerifying(true)
+    try {
+      setReport(await verifyDualStake(addr ?? vaultInput))
+    } finally {
+      setVerifying(false)
+    }
+  }
+
+  useEffect(() => {
+    void runVerify()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function resolvePartner() {
     setBusy(true)
     setError(null)
     try {
-      const token = await lookupRobinhoodToken(partner.trim())
-      setLookedUp(token)
+      setLookedUp(await lookupRobinhoodToken(partner.trim()))
     } catch (err) {
       setLookedUp(null)
       setError(err instanceof Error ? err.message : 'lookup failed')
@@ -42,11 +59,48 @@ export function StakingPage() {
       </article>
 
       <article className="card">
+        <h3>DualStake verification</h3>
+        <p className="meta">
+          Paste a deployed hook address or set VITE_STAKING_VAULT. Checks bytecode +
+          unrmn()/partner()/graduated() against the published interface. Writes stay
+          off until the address matches and VITE_ENABLE_STAKING=true.
+        </p>
+        <div className="inline wrap">
+          <input
+            value={vaultInput}
+            onChange={(e) => setVaultInput(e.target.value)}
+            placeholder="0x DualStake / hook address"
+          />
+          <button className="button" type="button" onClick={() => runVerify()} disabled={verifying}>
+            {verifying ? 'Checking…' : 'Verify on-chain'}
+          </button>
+        </div>
+        {report && (
+          <>
+            <p className={report.verified ? 'status ok' : 'status warn'}>
+              {report.verified
+                ? report.canEnableWrites
+                  ? 'Structural match + flag on — writes may be enabled in appConfig.'
+                  : 'Structural match. Set VITE_ENABLE_STAKING=true and mark stakingVault verified in appConfig to unlock writes.'
+                : 'Not verified yet.'}
+            </p>
+            <ul className="list">
+              {report.checks.map((check) => (
+                <li key={check.key}>
+                  {check.ok ? '✓' : '✗'} {check.detail}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </article>
+
+      <article className="card">
         <h3>Partner token</h3>
         <div className="inline wrap">
           <input
             value={partner}
-            onChange={(event) => setPartner(event.target.value)}
+            onChange={(e) => setPartner(e.target.value)}
             placeholder="0x partner token on Robinhood Chain"
           />
           <button className="button" type="button" onClick={resolvePartner} disabled={busy}>
@@ -56,31 +110,19 @@ export function StakingPage() {
         <p className="meta">Shortcuts</p>
         <div className="inline wrap">
           {robinhoodPartners.map((asset) => (
-            <button
-              key={asset.symbol}
-              className="button"
-              type="button"
-              onClick={() => setPartner(asset.address)}
-            >
+            <button key={asset.symbol} className="button" type="button" onClick={() => setPartner(asset.address)}>
               $uNRMN/{asset.symbol}
             </button>
           ))}
           {hybridAssets
             .filter((asset) => asset.address)
             .map((asset) => (
-              <button
-                key={asset.id}
-                className="button"
-                type="button"
-                onClick={() => setPartner(asset.address || '')}
-              >
+              <button key={asset.id} className="button" type="button" onClick={() => setPartner(asset.address || '')}>
                 {asset.symbol}
               </button>
             ))}
         </div>
-        <p className="meta">
-          Official legs: WETH, USDG, NVDA, AAPL. Paste any other Robinhood ERC-20 address to resolve.
-        </p>
+        <p className="meta">Official legs: WETH, USDG, NVDA, AAPL. Paste any other Robinhood ERC-20 address to resolve.</p>
         {lookedUp && (
           <p className="status ok">
             {lookedUp.name} ({lookedUp.symbol}) · {lookedUp.decimals} decimals · {lookedUp.address}
@@ -94,22 +136,21 @@ export function StakingPage() {
         <div className="inline wrap">
           <label>
             $uNRMN
-            <input value={unrmnAmount} onChange={(event) => setUnrmnAmount(event.target.value)} />
+            <input value={unrmnAmount} onChange={(e) => setUnrmnAmount(e.target.value)} />
           </label>
           <label>
             {lookedUp?.symbol || 'partner'}
-            <input
-              value={partnerAmount}
-              onChange={(event) => setPartnerAmount(event.target.value)}
-            />
+            <input value={partnerAmount} onChange={(e) => setPartnerAmount(e.target.value)} />
           </label>
         </div>
         <p className="meta">
           Pair: {UNRMN_TOKEN.symbol} / {lookedUp?.symbol || '???'} · wallet{' '}
           {walletAddress ?? 'not connected'}
         </p>
-        <button className="button" type="button" disabled>
-          Stake disabled — DualStake hook not verified
+        <button className="button" type="button" disabled={!report?.canEnableWrites}>
+          {report?.canEnableWrites
+            ? 'Stake (hook verified + flag on)'
+            : 'Stake disabled — DualStake hook not verified'}
         </button>
       </article>
 
