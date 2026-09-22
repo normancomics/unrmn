@@ -163,3 +163,29 @@ input {
   border-bottom: 1px solid #2f3148;
   padding: 0.45rem 0.25rem;
 }
+
+h1, h2, h3, h4 {
+  margin: 0 0 0.4rem;
+}
+
+.pill {
+  border: 1px solid #62689f;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  word-break: break-all;
+}
+
+a.button {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.gallery-item h4 {
+  margin-top: 0.6rem;
+}
