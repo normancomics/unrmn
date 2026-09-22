@@ -1,8 +1,10 @@
+import { useState, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import type { ReactNode } from 'react'
 import { appConfig } from '../config/appConfig'
+import { FILE } from '../config/partners'
 import { useAppState } from '../state/useAppState'
 import { shortenAddress } from '../lib/format'
+import { isSoundEnabled, setSoundEnabled, tap } from '../lib/sound'
 import { LiveTicker } from './LiveTicker'
 
 const navItems = [
@@ -18,6 +20,7 @@ const navItems = [
 
 export function Layout({ children }: { children: ReactNode }) {
   const { walletAddress, connect, disconnect, connecting, lastError } = useAppState()
+  const [soundOn, setSoundOn] = useState(isSoundEnabled())
 
   return (
     <div className="app-shell">
@@ -27,11 +30,24 @@ export function Layout({ children }: { children: ReactNode }) {
           <p className="eyebrow">
             {appConfig.chainName} · chain {appConfig.chainId}
           </p>
-          <h1>
+          <h1 className="brand-row">
+            <img className="brand-mark" src={FILE.logo} alt="" />
             {appConfig.appName} {appConfig.symbol}
           </h1>
         </div>
         <div className="inline">
+          <button
+            type="button"
+            className="button"
+            onClick={() => {
+              const next = !soundOn
+              setSoundEnabled(next)
+              setSoundOn(next)
+              if (next) tap('open')
+            }}
+          >
+            {soundOn ? 'Sound on' : 'Sound off'}
+          </button>
           {walletAddress ? (
             <>
               <span className="pill">{shortenAddress(walletAddress)}</span>
@@ -46,9 +62,7 @@ export function Layout({ children }: { children: ReactNode }) {
           )}
         </div>
       </header>
-
       {lastError && <p className="status warn">{lastError}</p>}
-
       <nav className="top-nav">
         {navItems.map((item) => (
           <NavLink
@@ -60,7 +74,6 @@ export function Layout({ children }: { children: ReactNode }) {
           </NavLink>
         ))}
       </nav>
-
       <main>{children}</main>
     </div>
   )

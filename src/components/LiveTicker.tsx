@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { UTOKEN } from '../config/utoken'
 import { readActivityFeed, type ActivityItem } from '../services/activityFeed'
 import { formatAmount, shortenAddress } from '../lib/format'
+import { tap } from '../lib/sound'
 import './ticker.css'
 
 function label(item: ActivityItem) {
@@ -22,7 +23,12 @@ export function LiveTicker() {
       readActivityFeed()
         .then((next) => {
           if (!live) return
-          setItems(next)
+          setItems((prev) => {
+            if (prev[0] && next[0] && prev[0].id !== next[0].id) {
+              tap(next[0].side === 'SELL' ? 'sell' : next[0].side === 'BUY' ? 'buy' : 'tick')
+            }
+            return next
+          })
           setError(next.length ? null : 'waiting on first $uNRMN print')
         })
         .catch((err: unknown) => {
