@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_ENABLE_STAKING?: string
   readonly VITE_ENABLE_SWAP?: string
   readonly VITE_ENABLE_YIELD?: string
+  readonly VITE_STAKING_VAULT?: string
   readonly VITE_RPC_URL?: string
 }
 
