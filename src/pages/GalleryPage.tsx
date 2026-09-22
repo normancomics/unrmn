@@ -1,44 +1,44 @@
-import { useAppState } from '../state/useAppState'
+import { useEffect, useState } from 'react'
 import { appConfig } from '../config/appConfig'
+import { FILE } from '../config/partners'
+import { useAppState } from '../state/useAppState'
+import { fetchAssets, type DeskAsset } from '../services/utokenDesk'
+import { shortenAddress } from '../lib/format'
 
 export function GalleryPage() {
   const { snapshot, walletAddress } = useAppState()
-  const nftHoldings = snapshot?.nftHoldings ?? []
+  const [assets, setAssets] = useState<DeskAsset[]>([])
   const wholeTokens = Math.floor(snapshot?.tokenHoldings[0]?.balance ?? 0)
+
+  useEffect(() => {
+    fetchAssets(40).then(setAssets).catch(() => undefined)
+  }, [])
 
   return (
     <section className="stack">
       <article className="card">
-        <h2>NFT holdings / gallery</h2>
+        <h2>µNORMAN layers</h2>
         <p className="meta">
-          µToken mints one card per whole $uNRMN. This gallery renders local card
-          slots from on-chain balance until a dedicated metadata indexer is wired.
+          Official art from the µToken collection and @uNORMANCOMICS. Cards are
+          generated on-chain layer by layer; this desk shows live token ids + the
+          collection gif until a pixel renderer is ported.
         </p>
         <p className="meta">
-          Whole cards inferred: {walletAddress ? wholeTokens : 0}
+          Your whole cards: {walletAddress ? wholeTokens : 0} · revealed on indexer:{' '}
+          {assets.length}
         </p>
+        <a className="button" href={appConfig.collectionUrl} target="_blank" rel="noreferrer">
+          Open full reveal wall
+        </a>
       </article>
       <div className="gallery-grid">
-        {nftHoldings.map((item) => (
-          <article key={item.id} className="card gallery-item">
-            <img src={item.image} alt={item.name} />
-            <h4>{item.name}</h4>
-            <p className="meta">{item.collection}</p>
-            <p className="meta">{item.traits.join(' • ')}</p>
+        {assets.map((asset) => (
+          <article key={asset.assetId} className="card gallery-item">
+            <img src={FILE.logo} alt={`µNORMAN #${asset.assetId}`} />
+            <h4>#{asset.assetId}</h4>
+            <p className="meta">{shortenAddress(asset.owner)}</p>
           </article>
         ))}
-        {nftHoldings.length === 0 && (
-          <article className="card">
-            <p>Connect a wallet that holds whole $uNRMN to render card slots.</p>
-            <p className="meta">
-              Official art layers live on{' '}
-              <a href={appConfig.collectionUrl} target="_blank" rel="noreferrer">
-                utoken.gg/collection/unrmn
-              </a>
-              .
-            </p>
-          </article>
-        )}
       </div>
     </section>
   )
