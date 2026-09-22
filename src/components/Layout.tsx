@@ -5,13 +5,13 @@ import { useAppState } from '../state/useAppState'
 import { shortenAddress } from '../lib/format'
 
 const navItems = [
-  { to: '/', label: 'Home' },
-  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/', label: 'Bond' },
+  { to: '/market', label: 'Book' },
   { to: '/gallery', label: 'Gallery' },
-  { to: '/yield', label: 'Yield' },
-  { to: '/community', label: 'Community' },
-  { to: '/staking', label: 'Staking' },
-  { to: '/dex', label: 'DEX' },
+  { to: '/hybrid', label: 'Hybrid' },
+  { to: '/staking', label: 'Stake' },
+  { to: '/dashboard', label: 'Desk' },
+  { to: '/community', label: 'Feed' },
 ]
 
 export function Layout({ children }: { children: ReactNode }) {
