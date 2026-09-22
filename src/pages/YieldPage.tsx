@@ -16,19 +16,23 @@ export function YieldPage() {
         <h2>Quarterly collector yield</h2>
         <FeatureGate feature="yield" title="Yield vault" />
         <p className="meta">
-          Published rule from the µToken listing: hodlers earn quarterly yield for
-          displaying µNORMAN cards as social PFPs. This desk previews the schedule.
-          It cannot pay until a verified vault exists.
+          Yield starts October 1, 2026. Until then this page is a schedule only.
+          After that date, hodlers who keep at least one whole card and display it
+          as a PFP enter the quarter snapshot. Nothing pays until a verified vault exists.
         </p>
       </article>
 
       <article className="card">
-        <h3>This quarter</h3>
+        <h3>This window</h3>
         <p>
           Wallet {walletAddress ? 'connected' : 'not connected'} · {formatAmount(held, 4)} $uNRMN ·{' '}
           {whole} whole cards
         </p>
-        {preview.eligible ? (
+        {!preview.opened ? (
+          <p className="status warn">
+            Closed until October 1, 2026. Holdings still count toward the first snapshot after that date.
+          </p>
+        ) : preview.eligible ? (
           <p className="status ok">
             Eligible preview: {formatAmount(preview.units, 4)} collector units at {preview.ratePct}% of
             whole cards. Claim stays disabled.
@@ -39,9 +43,9 @@ export function YieldPage() {
           </p>
         )}
         <ul className="list">
+          <li>First snapshot window: Oct 1 → Dec 31, 2026</li>
           <li>Whole token held at quarter close</li>
-          <li>PFP display on X / socials (self-attested until a vault can prove it)</li>
-          <li>Bonus stack: NFTs, tokens, original art, merch — not a phony APY vault</li>
+          <li>PFP display on X / socials</li>
         </ul>
       </article>
 
@@ -70,7 +74,7 @@ export function YieldPage() {
           </tbody>
         </table>
         <button className="button" type="button" disabled>
-          Claim disabled — no yield vault mapped
+          {preview.opened ? 'Claim disabled — no yield vault mapped' : 'Opens Oct 1, 2026'}
         </button>
       </article>
     </section>
