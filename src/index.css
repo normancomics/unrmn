@@ -189,3 +189,28 @@ a.button {
 .gallery-item h4 {
   margin-top: 0.6rem;
 }
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.meter {
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid #62689f;
+  background: #12132a;
+  overflow: hidden;
+  margin: 0.75rem 0;
+}
+
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c5cff, #89c6ff);
+}
+
+label {
+  display: grid;
+  gap: 0.3rem;
+  color: #a8abca;
+  font-size: 0.8rem;
+}
