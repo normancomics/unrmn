@@ -1,34 +1,68 @@
+import { useState, type ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import type { ReactNode } from 'react'
 import { appConfig } from '../config/appConfig'
+import { FILE } from '../config/partners'
 import { useAppState } from '../state/useAppState'
+import { shortenAddress } from '../lib/format'
+import { isSoundEnabled, setSoundEnabled, tap } from '../lib/sound'
+import { LiveTicker } from './LiveTicker'
 
 const navItems = [
-  { to: '/', label: 'Home' },
-  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/', label: 'Bond' },
+  { to: '/market', label: 'Book' },
   { to: '/gallery', label: 'Gallery' },
+  { to: '/hybrid', label: 'Hybrid' },
+  { to: '/staking', label: 'Stake' },
   { to: '/yield', label: 'Yield' },
-  { to: '/community', label: 'Community' },
-  { to: '/staking', label: 'Staking' },
-  { to: '/dex', label: 'DEX' },
+  { to: '/dashboard', label: 'Desk' },
+  { to: '/community', label: 'Feed' },
 ]
 
 export function Layout({ children }: { children: ReactNode }) {
-  const { walletAddress, connect } = useAppState()
+  const { walletAddress, connect, disconnect, connecting, lastError } = useAppState()
+  const [soundOn, setSoundOn] = useState(isSoundEnabled())
+
   return (
     <div className="app-shell">
+      <LiveTicker />
       <header className="app-header">
         <div>
-          <p className="eyebrow">{appConfig.chainName}</p>
-          <h1>
+          <p className="eyebrow">
+            {appConfig.chainName} · chain {appConfig.chainId}
+          </p>
+          <h1 className="brand-row">
+            <img className="brand-mark" src={FILE.logo} alt="" />
             {appConfig.appName} {appConfig.symbol}
           </h1>
         </div>
-        <button type="button" className="button" onClick={connect}>
-          {walletAddress ? `Connected: ${walletAddress}` : 'Connect wallet'}
-        </button>
+        <div className="inline">
+          <button
+            type="button"
+            className="button"
+            onClick={() => {
+              const next = !soundOn
+              setSoundEnabled(next)
+              setSoundOn(next)
+              if (next) tap('open')
+            }}
+          >
+            {soundOn ? 'Sound on' : 'Sound off'}
+          </button>
+          {walletAddress ? (
+            <>
+              <span className="pill">{shortenAddress(walletAddress)}</span>
+              <button type="button" className="button" onClick={disconnect}>
+                Disconnect
+              </button>
+            </>
+          ) : (
+            <button type="button" className="button" onClick={connect} disabled={connecting}>
+              {connecting ? 'Connecting…' : 'Connect wallet'}
+            </button>
+          )}
+        </div>
       </header>
-
+      {lastError && <p className="status warn">{lastError}</p>}
       <nav className="top-nav">
         {navItems.map((item) => (
           <NavLink
@@ -40,7 +74,6 @@ export function Layout({ children }: { children: ReactNode }) {
           </NavLink>
         ))}
       </nav>
-
       <main>{children}</main>
     </div>
   )

@@ -10,9 +10,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -20,13 +18,8 @@ body {
   background: radial-gradient(circle at top, #1b1f3b, #09090f 40%);
 }
 
-a {
-  color: #89c6ff;
-}
-
-#root {
-  width: 100%;
-}
+a { color: #89c6ff; }
+#root { width: 100%; }
 
 .app-shell {
   max-width: 1120px;
@@ -70,10 +63,7 @@ a {
   color: #fff;
 }
 
-.stack {
-  display: grid;
-  gap: 1rem;
-}
+.stack { display: grid; gap: 1rem; }
 
 .card,
 .hero-card {
@@ -114,20 +104,9 @@ a {
   object-fit: cover;
 }
 
-.list {
-  margin: 0;
-  padding-left: 1rem;
-}
-
-.meta {
-  color: #a8abca;
-}
-
-.inline {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+.list { margin: 0; padding-left: 1rem; }
+.meta { color: #a8abca; }
+.inline { display: flex; align-items: center; gap: 0.5rem; }
 
 input {
   border: 1px solid #3f4263;
@@ -137,29 +116,164 @@ input {
   padding: 0.45rem 0.6rem;
 }
 
-.status {
-  border-radius: 10px;
-  padding: 0.75rem;
-}
+.status { border-radius: 10px; padding: 0.75rem; }
+.status.ok { border: 1px solid #389674; background: rgba(56, 150, 116, 0.12); }
+.status.warn { border: 1px solid #b88d42; background: rgba(184, 141, 66, 0.12); }
 
-.status.ok {
-  border: 1px solid #389674;
-  background: rgba(56, 150, 116, 0.12);
-}
-
-.status.warn {
-  border: 1px solid #b88d42;
-  background: rgba(184, 141, 66, 0.12);
-}
-
-.matrix {
-  width: 100%;
-  border-collapse: collapse;
-}
-
+.matrix { width: 100%; border-collapse: collapse; }
 .matrix th,
 .matrix td {
   text-align: left;
   border-bottom: 1px solid #2f3148;
   padding: 0.45rem 0.25rem;
 }
+
+h1, h2, h3, h4 { margin: 0 0 0.4rem; }
+
+.pill {
+  border: 1px solid #62689f;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  word-break: break-all;
+}
+
+a.button { text-decoration: none; display: inline-block; }
+.gallery-item h4 { margin-top: 0.6rem; }
+.wrap { flex-wrap: wrap; }
+
+.meter {
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid #62689f;
+  background: #12132a;
+  overflow: hidden;
+  margin: 0.75rem 0;
+}
+
+.meter-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c5cff, #89c6ff);
+}
+
+label {
+  display: grid;
+  gap: 0.3rem;
+  color: #a8abca;
+  font-size: 0.8rem;
+}
+
+.banner {
+  width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.8rem;
+  display: block;
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.2rem 0 0;
+}
+
+.brand-mark, .avatar, .tiny { border-radius: 8px; object-fit: cover; }
+.brand-mark { width: 42px; height: 42px; }
+.avatar { width: 56px; height: 56px; }
+.tiny { width: 22px; height: 22px; }
+
+.card-art {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #12121c;
+}
+
+.card-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.card-art-id {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  font-size: 0.7rem;
+  background: #000000cc;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+}
+
+.card-art-badge {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: #000000aa;
+}
+.card-art-badge.onchain { color: #7dffb3; }
+.card-art-badge.loading { color: #cfcfff; }
+.card-art-badge.fallback { color: #ffd27d; }
+
+.reveal-wall {
+  width: 100%;
+  min-height: 420px;
+  border: 0;
+  border-radius: 12px;
+  background: #111;
+}
+
+.gallery-item { text-decoration: none; color: inherit; }
+.wall-wrap { overflow: hidden; }
+
+.inspector-grid {
+  display: grid;
+  grid-template-columns: minmax(140px, 220px) 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 640px) {
+  .inspector-grid { grid-template-columns: 1fr; }
+}
+
+.gallery-item.selected {
+  border-color: #bca8ff;
+  box-shadow: 0 0 0 1px #bca8ff55;
+}
+
+button.gallery-item {
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+
+.meta-block { margin-top: 0.75rem; }
+
+.kiosk-thumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.kiosk-thumb .card-art {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+.kiosk-thumb .card-art-id,
+.kiosk-thumb .card-art-badge { display: none; }

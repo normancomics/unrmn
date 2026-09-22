@@ -1,0 +1,53 @@
+.ticker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  border: 1px solid #373852;
+  border-radius: 999px;
+  background: #0b0c18;
+  overflow: hidden;
+}
+
+.ticker-source {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.8rem;
+  color: #d7ff8a;
+  text-decoration: none;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+}
+
+.ticker-window {
+  flex: 1;
+  overflow: hidden;
+}
+
+.ticker-track {
+  display: inline-flex;
+  gap: 1.5rem;
+  white-space: nowrap;
+  animation: ticker-scroll 42s linear infinite;
+  padding: 0.4rem 0;
+}
+
+.ticker-item {
+  text-decoration: none;
+  font-size: 0.82rem;
+}
+
+.ticker-item.buy { color: #7dffb2; }
+.ticker-item.sell { color: #ff8f8f; }
+.ticker-item.send { color: #89c6ff; }
+
+.ticker-empty {
+  margin: 0;
+  padding: 0.4rem 0.2rem;
+  color: #a8abca;
+  font-size: 0.82rem;
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}

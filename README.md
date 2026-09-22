@@ -1,36 +1,36 @@
 # uNORMAN Collector + Discovery dApp
 
-Persistent web dApp foundation for uNORMAN on Robinhood Chain with strict trust boundaries:
+Persistent web dApp for **uNORMAN / $uNRMN** on Robinhood Chain with strict trust boundaries.
 
-- Wallet-connected collector dashboard
-- NFT gallery and holdings views
-- Yield and bonus informational views (gated until verified)
-- Community feed surface (X, Telegram, onchain seed)
-- Staking and DEX entry points with feature/contract gating
-- Contract/config verification matrix to avoid implying unverified live pools
+## Collector campaign
+
+Target: bond **9.99 ETH**, graduate, burn LP into Uniswap v4, run a cleaner card book than utoken.gg.
+
+- `/` bonding meter and enlist desk
+- `/market` named-card book + v4 rails
+- `/hybrid` µToken collection + mint.club sister assets
+- `/staking` resolve any Robinhood ERC-20 and preview $uNRMN dual-stake
+- Hook spec: `contracts/UNRMNDualStakeHook.sol`
+
+## Live contracts
+
+| Surface | Address | State |
+| --- | --- | --- |
+| `$uNRMN` / collection | `0x7ed16d612215b650434d7e45827cf080ea0d0f63` | verified (read) |
+| Uniswap v4 PoolManager | `0x8366a39CC670B4001A1121B8F6A443A643e40951` | official rails |
+| mint.club token factory | `0xEb54dACB4C2ccb64F8074eceEa33b5eBb38E5387` | official rails |
+| DualStake hook | unset | disabled |
 
 ## Run locally
 
 ```bash
 npm install
+cp .env.example .env
 npm run dev
 ```
 
-## Build and lint
+Optional env:
 
-```bash
-npm run lint
-npm run build
-```
-
-## Environment flags
-
-Optional Vite environment variables:
-
-- `VITE_APP_ENV` = `development | staging | production`
-- `VITE_ENABLE_MINT` = `true | false`
-- `VITE_ENABLE_STAKING` = `true | false`
-- `VITE_ENABLE_SWAP` = `true | false`
-- `VITE_ENABLE_YIELD` = `true | false`
-
-All transaction-capable surfaces remain gated unless feature flags are enabled and matching contracts are marked as verified.
+- `VITE_BOND_ETH_RAISED` if the curve reserve is not sitting on the token address
+- `VITE_GRADUATED=true` after LP is burned into v4
+- `VITE_ENABLE_STAKING=true` only after a verified DualStake hook is mapped

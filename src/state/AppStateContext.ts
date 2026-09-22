@@ -7,7 +7,10 @@ export interface AppState {
   snapshot: CollectorSnapshot | null
   preferences: UserPreferences
   seenFeedIds: string[]
+  connecting: boolean
+  lastError: string | null
   connect: () => Promise<void>
+  disconnect: () => void
   refresh: () => Promise<void>
   addWatchlistSymbol: (symbol: string) => void
 }
