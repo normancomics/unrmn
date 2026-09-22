@@ -14,6 +14,7 @@ import {
   type DeskToken,
 } from '../services/utokenDesk'
 import { readActivityFeed, type ActivityItem } from '../services/activityFeed'
+import { CardArt } from '../components/CardArt'
 
 export function MarketPage() {
   const [tab, setTab] = useState<'kiosk' | 'registry' | 'tape'>('kiosk')
@@ -63,7 +64,12 @@ export function MarketPage() {
                 const ask = weiToEth(row.offerWei)
                 return (
                   <tr key={row.assetId}>
-                    <td>#{row.assetId}</td>
+                    <td>
+                      <div className="kiosk-thumb">
+                        <CardArt assetId={row.assetId} />
+                        <span>#{row.assetId}</span>
+                      </div>
+                    </td>
                     <td>{shortenAddress(row.owner)}</td>
                     <td>{ask != null ? formatAmount(ask, 5) : formatAmount(floorEth, 5)}</td>
                     <td>{ask != null ? formatAmount(ask * (floorUsd / Math.max(floorEth, 1e-12)), 2) : formatAmount(floorUsd, 2)}</td>
