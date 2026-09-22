@@ -1,12 +1,13 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { CommunityPage } from './pages/CommunityPage'
 import { DashboardPage } from './pages/DashboardPage'
-import { DexPage } from './pages/DexPage'
 import { GalleryPage } from './pages/GalleryPage'
 import { HomePage } from './pages/HomePage'
+import { HybridPage } from './pages/HybridPage'
+import { MarketPage } from './pages/MarketPage'
 import { StakingPage } from './pages/StakingPage'
 import { YieldPage } from './pages/YieldPage'
-import { CommunityPage } from './pages/CommunityPage'
 
 export default function App() {
   return (
@@ -15,10 +16,12 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/market" element={<MarketPage />} />
+        <Route path="/dex" element={<MarketPage />} />
+        <Route path="/hybrid" element={<HybridPage />} />
         <Route path="/yield" element={<YieldPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/staking" element={<StakingPage />} />
-        <Route path="/dex" element={<DexPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>
