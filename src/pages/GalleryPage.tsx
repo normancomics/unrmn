@@ -1,15 +1,21 @@
 import { useAppState } from '../state/useAppState'
+import { appConfig } from '../config/appConfig'
 
 export function GalleryPage() {
-  const { snapshot } = useAppState()
+  const { snapshot, walletAddress } = useAppState()
   const nftHoldings = snapshot?.nftHoldings ?? []
+  const wholeTokens = Math.floor(snapshot?.tokenHoldings[0]?.balance ?? 0)
 
   return (
     <section className="stack">
       <article className="card">
-        <h2>NFT holdings/gallery</h2>
+        <h2>NFT holdings / gallery</h2>
         <p className="meta">
-          Collection-centric, owner-centric, and token-level read-only views.
+          µToken mints one card per whole $uNRMN. This gallery renders local card
+          slots from on-chain balance until a dedicated metadata indexer is wired.
+        </p>
+        <p className="meta">
+          Whole cards inferred: {walletAddress ? wholeTokens : 0}
         </p>
       </article>
       <div className="gallery-grid">
@@ -23,7 +29,14 @@ export function GalleryPage() {
         ))}
         {nftHoldings.length === 0 && (
           <article className="card">
-            <p>Connect wallet to render holdings.</p>
+            <p>Connect a wallet that holds whole $uNRMN to render card slots.</p>
+            <p className="meta">
+              Official art layers live on{' '}
+              <a href={appConfig.collectionUrl} target="_blank" rel="noreferrer">
+                utoken.gg/collection/unrmn
+              </a>
+              .
+            </p>
           </article>
         )}
       </div>

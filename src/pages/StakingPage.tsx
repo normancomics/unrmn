@@ -6,9 +6,7 @@ import { useAppState } from '../state/useAppState'
 export function StakingPage() {
   const { walletAddress } = useAppState()
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const confirmation = walletAddress
-    ? buildConfirmation('staking', walletAddress)
-    : null
+  const confirmation = walletAddress ? buildConfirmation('staking', walletAddress) : null
 
   return (
     <section className="stack">
@@ -32,6 +30,11 @@ export function StakingPage() {
           <p>Network: {confirmation.chainName}</p>
           <p>Wallet: {confirmation.walletAddress}</p>
           <p>Contract: {confirmation.contractAddress}</p>
+          <p className="meta">
+            {confirmation.enabled
+              ? 'Feature flag + verified vault are both set.'
+              : 'Blocked: staking vault is not verified.'}
+          </p>
         </article>
       )}
     </section>

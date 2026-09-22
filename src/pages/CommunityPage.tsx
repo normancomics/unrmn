@@ -9,7 +9,8 @@ export function CommunityPage() {
       <article className="card">
         <h2>Community feed</h2>
         <p className="meta">
-          X + Telegram + onchain activity aggregation with local cache tracking.
+          Seeded X + Telegram + onchain surfaces with local cache tracking. Live
+          social APIs stay out of the client until a backend proxy exists.
         </p>
         <p className="meta">Cached feed ids: {seenFeedIds.join(', ') || 'none'}</p>
       </article>
@@ -26,7 +27,7 @@ export function CommunityPage() {
             </a>
           </article>
         ))}
-        {feed.length === 0 && <article className="card">Connect wallet to hydrate feed.</article>}
+        {feed.length === 0 && <article className="card">Feed hydrating…</article>}
       </div>
     </section>
   )

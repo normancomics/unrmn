@@ -1,4 +1,5 @@
 import { appConfig, configValidationIssues } from '../config/appConfig'
+import { explorerTokenUrl, UNRMN_TOKEN } from '../config/chain'
 import { ecosystemEndpoints } from '../services/ecosystem'
 
 export function HomePage() {
@@ -8,8 +9,33 @@ export function HomePage() {
         <p className="eyebrow">collector + discovery dApp</p>
         <h2>Welcome to uNORMAN on Robinhood Chain</h2>
         <p>
-          A hybrid DeFi + immutable art home for collectors, frens, degens, chads,
-          based trench dwellers, btc maxis, fake rare homies, and cryptoart plebs.
+          The token is the art. $uNRMN lives on µToken: a buy mints one card per whole
+          token received, and sells burn newest-first. This app stays read-first —
+          transaction surfaces stay gated until a matching vault or router is verified.
+        </p>
+        <div className="inline">
+          <a className="button" href={appConfig.collectionUrl} target="_blank" rel="noreferrer">
+            Open collection
+          </a>
+          <a className="button" href={appConfig.tradeUrl} target="_blank" rel="noreferrer">
+            Trade on µToken
+          </a>
+          <a className="button" href={appConfig.manifestoUrl} target="_blank" rel="noreferrer">
+            Read manifesto
+          </a>
+        </div>
+      </article>
+
+      <article className="card">
+        <h3>Live token</h3>
+        <p>
+          {UNRMN_TOKEN.name} ({UNRMN_TOKEN.symbol}) · {UNRMN_TOKEN.decimals} decimals ·
+          capped supply {UNRMN_TOKEN.totalSupply.toLocaleString()}
+        </p>
+        <p className="meta">
+          <a href={explorerTokenUrl(UNRMN_TOKEN.address)} target="_blank" rel="noreferrer">
+            {UNRMN_TOKEN.address}
+          </a>
         </p>
       </article>
 
@@ -28,7 +54,7 @@ export function HomePage() {
             {appConfig.contracts.map((contract) => (
               <tr key={contract.key}>
                 <td>{contract.label}</td>
-                <td>{contract.address}</td>
+                <td className="mono">{contract.address}</td>
                 <td>{contract.feature}</td>
                 <td>{contract.state}</td>
               </tr>
