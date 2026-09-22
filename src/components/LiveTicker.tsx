@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { UTOKEN } from '../config/utoken'
 import { readActivityFeed, type ActivityItem } from '../services/activityFeed'
 import { formatAmount, shortenAddress } from '../lib/format'
+import './ticker.css'
 
 function label(item: ActivityItem) {
   const amt = formatAmount(item.amount, 2)
