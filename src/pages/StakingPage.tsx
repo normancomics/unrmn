@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FeatureGate } from '../components/FeatureGate'
 import { UNRMN_TOKEN } from '../config/chain'
 import { hybridAssets } from '../config/campaign'
+import { robinhoodPartners } from '../config/partners'
 import { UNISWAP_V4 } from '../config/uniswap'
 import { lookupRobinhoodToken, type LookedUpToken } from '../services/tokenLookup'
 import { useAppState } from '../state/useAppState'
@@ -54,6 +55,16 @@ export function StakingPage() {
         </div>
         <p className="meta">Shortcuts</p>
         <div className="inline wrap">
+          {robinhoodPartners.map((asset) => (
+            <button
+              key={asset.symbol}
+              className="button"
+              type="button"
+              onClick={() => setPartner(asset.address)}
+            >
+              $uNRMN/{asset.symbol}
+            </button>
+          ))}
           {hybridAssets
             .filter((asset) => asset.address)
             .map((asset) => (
@@ -67,6 +78,9 @@ export function StakingPage() {
               </button>
             ))}
         </div>
+        <p className="meta">
+          Official legs: WETH, USDG, NVDA, AAPL. Paste any other Robinhood ERC-20 address to resolve.
+        </p>
         {lookedUp && (
           <p className="status ok">
             {lookedUp.name} ({lookedUp.symbol}) · {lookedUp.decimals} decimals · {lookedUp.address}
@@ -96,6 +110,17 @@ export function StakingPage() {
         </p>
         <button className="button" type="button" disabled>
           Stake disabled — DualStake hook not verified
+        </button>
+      </article>
+
+      <article className="card">
+        <h3>Create a pool</h3>
+        <p className="meta">
+          Intended initialize: $uNRMN + resolved partner on Uniswap v4 PoolManager.
+          Create stays off until the DualStake hook address is verified.
+        </p>
+        <button className="button" type="button" disabled>
+          Create $uNRMN / {lookedUp?.symbol || 'partner'} pool — not verified
         </button>
       </article>
 
