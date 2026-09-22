@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { appConfig } from '../config/appConfig'
 import { useAppState } from '../state/useAppState'
 import { shortenAddress } from '../lib/format'
+import { LiveTicker } from './LiveTicker'
 
 const navItems = [
   { to: '/', label: 'Bond' },
@@ -10,6 +11,7 @@ const navItems = [
   { to: '/gallery', label: 'Gallery' },
   { to: '/hybrid', label: 'Hybrid' },
   { to: '/staking', label: 'Stake' },
+  { to: '/yield', label: 'Yield' },
   { to: '/dashboard', label: 'Desk' },
   { to: '/community', label: 'Feed' },
 ]
@@ -19,6 +21,7 @@ export function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="app-shell">
+      <LiveTicker />
       <header className="app-header">
         <div>
           <p className="eyebrow">
