@@ -1,84 +1,106 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { appConfig } from '../config/appConfig'
-import { campaign } from '../config/campaign'
+import { FILE } from '../config/partners'
 import { UNISWAP_V4 } from '../config/uniswap'
-import { seedMarketBook } from '../services/marketBook'
-import { useAppState } from '../state/useAppState'
+import { tap } from '../lib/sound'
+import { formatAmount, shortenAddress } from '../lib/format'
+import {
+  fetchAssets,
+  fetchDeskToken,
+  fetchRegistry,
+  fileUrl,
+  weiToEth,
+  type DeskAsset,
+  type DeskToken,
+} from '../services/utokenDesk'
+import { readActivityFeed, type ActivityItem } from '../services/activityFeed'
 
 export function MarketPage() {
-  const { snapshot, walletAddress } = useAppState()
-  const [tab, setTab] = useState<'book' | 'v4'>('book')
-  const listings = useMemo(
-    () => seedMarketBook(snapshot?.nftHoldings ?? []),
-    [snapshot?.nftHoldings],
-  )
+  const [tab, setTab] = useState<'kiosk' | 'registry' | 'tape'>('kiosk')
+  const [token, setToken] = useState<DeskToken | null>(null)
+  const [assets, setAssets] = useState<DeskAsset[]>([])
+  const [registry, setRegistry] = useState<DeskToken[]>([])
+  const [tape, setTape] = useState<ActivityItem[]>([])
+
+  useEffect(() => {
+    fetchDeskToken().then(setToken).catch(() => undefined)
+    fetchAssets(32).then(setAssets).catch(() => undefined)
+    fetchRegistry(48).then(setRegistry).catch(() => undefined)
+    readActivityFeed().then(setTape).catch(() => undefined)
+  }, [])
+
+  const floorUsd = token?.priceUsd ?? 0
+  const floorEth = token?.priceQuote ?? 0
+  const listed = assets.filter((asset) => asset.offerWei)
+  const rows = listed.length ? listed : assets.map((asset) => ({ ...asset, offerWei: null }))
 
   return (
     <section className="stack">
       <article className="card">
-        <h2>Collector book</h2>
+        <img className="banner" src={FILE.banner} alt="µNORMAN banner" />
+        <h2>Kiosk + registry</h2>
         <p className="meta">
-          Cleaner than the launchpad grid. Named cards. Standing bids. Curve until{' '}
-          {campaign.targetEth} ETH, then Uniswap v4 with burned LP.
+          Live µToken price is the card implied floor: 1 card = 1 $uNRMN. Asks use
+          offerWei when a holder posted one; otherwise the book shows the curve print.
         </p>
-        <div className="inline">
-          <button className="button" type="button" onClick={() => setTab('book')}>
-            Card book
-          </button>
-          <button className="button" type="button" onClick={() => setTab('v4')}>
-            v4 rails
-          </button>
-          <a className="button" href={appConfig.collectionUrl} target="_blank" rel="noreferrer">
-            Official collection
-          </a>
+        <p>
+          ${formatAmount(floorUsd, 2)} · {formatAmount(floorEth, 6)} ETH · 24h $
+          {formatAmount(token?.volume24hUsd ?? 0, 2)} · {token?.holdersCount ?? '—'} holders
+        </p>
+        <div className="inline wrap">
+          <button className="button" type="button" onClick={() => { setTab('kiosk'); tap('open') }}>Card kiosk</button>
+          <button className="button" type="button" onClick={() => { setTab('registry'); tap('open') }}>All µToken collections</button>
+          <button className="button" type="button" onClick={() => { setTab('tape'); tap('open') }}>Prints</button>
+          <a className="button" href={appConfig.collectionUrl} target="_blank" rel="noreferrer">Official collection</a>
         </div>
       </article>
-
-      {tab === 'book' ? (
+      {tab === 'kiosk' && (
         <article className="card">
           <table className="matrix">
-            <thead>
-              <tr>
-                <th>Side</th>
-                <th>Item</th>
-                <th>ETH</th>
-                <th>Maker</th>
-                <th>Venue</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Card</th><th>Owner</th><th>Ask ETH</th><th>Implied USD</th><th>Venue</th></tr></thead>
             <tbody>
-              {listings.map((row) => (
-                <tr key={row.id}>
-                  <td>{row.side}</td>
-                  <td>{row.item}</td>
-                  <td>{row.priceEth}</td>
-                  <td>{row.maker}</td>
-                  <td>{row.venue}</td>
+              {rows.map((row) => {
+                const ask = weiToEth(row.offerWei)
+                return (
+                  <tr key={row.assetId}>
+                    <td>#{row.assetId}</td>
+                    <td>{shortenAddress(row.owner)}</td>
+                    <td>{ask != null ? formatAmount(ask, 5) : formatAmount(floorEth, 5)}</td>
+                    <td>{ask != null ? formatAmount(ask * (floorUsd / Math.max(floorEth, 1e-12)), 2) : formatAmount(floorUsd, 2)}</td>
+                    <td>{ask != null ? 'posted offer' : 'curve floor'}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </article>
+      )}
+      {tab === 'registry' && (
+        <article className="card">
+          <table className="matrix">
+            <thead><tr><th></th><th>Token</th><th>USD</th><th>24h</th><th>Bond</th></tr></thead>
+            <tbody>
+              {registry.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.logoUrl ? <img className="tiny" src={fileUrl(item.logoUrl) || ''} alt="" /> : null}</td>
+                  <td><a href={`https://utoken.gg/token/${item.slug || item.address}`} target="_blank" rel="noreferrer">{item.symbol}</a></td>
+                  <td>${formatAmount(item.priceUsd || 0, 4)}</td>
+                  <td>${formatAmount(item.volume24hUsd || 0, 0)}</td>
+                  <td>{Math.round((item.bondingProgress || 0) * 100)}%</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {listings.length === 0 && (
-            <p className="meta">Connect a wallet that holds whole cards to seed personal asks.</p>
-          )}
-          <p className="meta">
-            {walletAddress
-              ? 'Asks above are previews from your inferred card slots.'
-              : 'Guest book shows standing bids only.'}
-          </p>
         </article>
-      ) : (
+      )}
+      {tab === 'tape' && (
         <article className="card">
-          <h3>Uniswap v4 after graduation</h3>
           <ul className="list">
-            <li>PoolManager {UNISWAP_V4.poolManager}</li>
-            <li>PositionManager {UNISWAP_V4.positionManager}</li>
-            <li>Universal Router {UNISWAP_V4.universalRouter}</li>
+            {tape.map((item) => (
+              <li key={item.id}>{item.side} {formatAmount(item.amount, 2)} $uNRMN · {shortenAddress(item.maker)}</li>
+            ))}
           </ul>
-          <p className="meta">
-            Hook plan: beforeSwap anti-snipe while bonding, afterSwap fee split to dual-stakers,
-            beforeRemoveLiquidity refuse LP pulls, graduation mints the position NFT to burn.
-          </p>
+          <p className="meta">PoolManager {UNISWAP_V4.poolManager}</p>
         </article>
       )}
     </section>
