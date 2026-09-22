@@ -2,6 +2,8 @@ export interface CollectorProfile {
   walletAddress: string
   displayName: string
   roles: string[]
+  chainId: number
+  ethBalance: number
 }
 
 export interface AssetToken {
@@ -14,7 +16,10 @@ export interface AssetToken {
 
 export interface TokenHolding {
   symbol: string
+  name: string
+  address: string
   balance: number
+  raw: string
 }
 
 export interface FeedItem {
@@ -28,7 +33,7 @@ export interface FeedItem {
 
 export interface EcosystemEndpoint {
   id: string
-  type: 'collection' | 'token'
+  type: 'collection' | 'token' | 'docs' | 'social'
   title: string
   href: string
 }

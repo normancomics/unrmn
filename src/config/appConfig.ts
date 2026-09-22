@@ -1,3 +1,5 @@
+import { UNRMN_TOKEN, robinhoodChain } from './chain'
+
 export type AppEnvironment = 'development' | 'staging' | 'production'
 export type FeatureKey = 'mint' | 'staking' | 'swap' | 'yield'
 export type VerificationState = 'verified' | 'informational' | 'disabled'
@@ -21,53 +23,55 @@ export const featureFlags: FeatureConfig = {
   yield: import.meta.env.VITE_ENABLE_YIELD === 'true',
 }
 
-export const contractsByEnv: Record<AppEnvironment, ContractEntry[]> = {
-  development: [
-    {
-      key: 'collection',
-      label: 'uNORMAN Collection Registry',
-      address: '0x0000000000000000000000000000000000000000',
-      feature: 'mint',
-      state: 'informational',
-    },
-    {
-      key: 'stakingVault',
-      label: 'uNORMAN Staking Vault',
-      address: '0x0000000000000000000000000000000000000000',
-      feature: 'staking',
-      state: 'disabled',
-    },
-    {
-      key: 'dexRouter',
-      label: 'Robinhood Chain DEX Router',
-      address: '0x0000000000000000000000000000000000000000',
-      feature: 'swap',
-      state: 'disabled',
-    },
-    {
-      key: 'yieldVault',
-      label: 'Yield/Bounty Vault',
-      address: '0x0000000000000000000000000000000000000000',
-      feature: 'yield',
-      state: 'informational',
-    },
-  ],
-  staging: [],
-  production: [],
-}
+const liveContracts: ContractEntry[] = [
+  {
+    key: 'collection',
+    label: 'uNORMAN Collection / $uNRMN',
+    address: UNRMN_TOKEN.address,
+    feature: 'mint',
+    state: 'verified',
+  },
+  {
+    key: 'stakingVault',
+    label: 'uNORMAN Staking Vault',
+    address: '0x0000000000000000000000000000000000000000',
+    feature: 'staking',
+    state: 'disabled',
+  },
+  {
+    key: 'dexRouter',
+    label: 'Robinhood Chain DEX Router',
+    address: '0x0000000000000000000000000000000000000000',
+    feature: 'swap',
+    state: 'disabled',
+  },
+  {
+    key: 'yieldVault',
+    label: 'Yield/Bounty Vault',
+    address: '0x0000000000000000000000000000000000000000',
+    feature: 'yield',
+    state: 'informational',
+  },
+]
 
-const fallbackContracts = contractsByEnv.development
+export const contractsByEnv: Record<AppEnvironment, ContractEntry[]> = {
+  development: liveContracts,
+  staging: liveContracts,
+  production: liveContracts,
+}
 
 export const appConfig = {
   appName: 'uNORMAN',
   symbol: '$uNRMN',
-  chainName: 'Robinhood Chain',
+  chainName: robinhoodChain.name,
+  chainId: robinhoodChain.id,
+  explorerUrl: robinhoodChain.blockExplorers.default.url,
+  collectionUrl: 'https://utoken.gg/collection/unrmn',
+  tradeUrl: 'https://utoken.gg/token/unrmn',
+  manifestoUrl: 'https://paragraph.com/@officialnormancomics/meme-migration',
   appEnvironment,
   featureFlags,
-  contracts:
-    contractsByEnv[appEnvironment].length > 0
-      ? contractsByEnv[appEnvironment]
-      : fallbackContracts,
+  contracts: contractsByEnv[appEnvironment],
 }
 
 export const configValidationIssues = appConfig.contracts
@@ -79,9 +83,7 @@ export function getContract(key: string) {
 }
 
 export function canUseFeature(feature: FeatureKey) {
-  const contractMatches = appConfig.contracts.filter(
-    (contract) => contract.feature === feature,
-  )
+  const contractMatches = appConfig.contracts.filter((contract) => contract.feature === feature)
   return (
     appConfig.featureFlags[feature] &&
     contractMatches.length > 0 &&
