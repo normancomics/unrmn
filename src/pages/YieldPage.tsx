@@ -1,5 +1,5 @@
 import { FeatureGate } from '../components/FeatureGate'
-import { useAppState } from '../state/AppContext'
+import { useAppState } from '../state/useAppState'
 
 export function YieldPage() {
   const { snapshot } = useAppState()

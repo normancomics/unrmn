@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FeatureGate } from '../components/FeatureGate'
 import { buildConfirmation } from '../services/chain/writeAdapter'
-import { useAppState } from '../state/AppContext'
+import { useAppState } from '../state/useAppState'
 
 export function DexPage() {
   const { walletAddress } = useAppState()

@@ -1,4 +1,4 @@
-import { useAppState } from '../state/AppContext'
+import { useAppState } from '../state/useAppState'
 
 export function GalleryPage() {
   const { snapshot } = useAppState()

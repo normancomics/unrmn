@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAppState } from '../state/AppContext'
+import { useAppState } from '../state/useAppState'
 
 export function DashboardPage() {
   const { walletAddress, snapshot, preferences, addWatchlistSymbol, refresh } =

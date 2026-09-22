@@ -1,4 +1,4 @@
-import { useAppState } from '../state/AppContext'
+import { useAppState } from '../state/useAppState'
 
 export function CommunityPage() {
   const { snapshot, seenFeedIds } = useAppState()

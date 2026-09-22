@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { appConfig } from '../config/appConfig'
-import { useAppState } from '../state/AppContext'
+import { useAppState } from '../state/useAppState'
 
 const navItems = [
   { to: '/', label: 'Home' },

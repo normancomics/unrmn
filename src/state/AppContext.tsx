@@ -1,12 +1,10 @@
 import {
-  createContext,
-  useContext,
+  useCallback,
   useEffect,
   useMemo,
   useState,
   type ReactNode,
 } from 'react'
-import type { CollectorSnapshot } from '../domain/models'
 import { connectWallet } from '../services/chain/readAdapter'
 import { buildCollectorSnapshot } from '../services/indexer'
 import {
@@ -17,18 +15,8 @@ import {
   type UserPreferences,
 } from '../services/persistence'
 import { reportError, trackEvent } from '../services/telemetry'
-
-interface AppState {
-  walletAddress: string | null
-  snapshot: CollectorSnapshot | null
-  preferences: UserPreferences
-  seenFeedIds: string[]
-  connect: () => Promise<void>
-  refresh: () => Promise<void>
-  addWatchlistSymbol: (symbol: string) => void
-}
-
-const AppContext = createContext<AppState | undefined>(undefined)
+import { AppStateContext } from './AppStateContext'
+import type { CollectorSnapshot } from '../domain/models'
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [walletAddress, setWalletAddress] = useState<string | null>(null)
@@ -36,13 +24,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [preferences, setPreferences] = useState<UserPreferences>(loadPreferences)
   const [seenFeedIds, setSeenFeedIds] = useState<string[]>(loadFeedCache)
 
-  async function refreshWithWallet(address: string) {
+  const refreshWithWallet = useCallback(async (address: string) => {
     const nextSnapshot = await buildCollectorSnapshot(address)
     setSnapshot(nextSnapshot)
     setSeenFeedIds(nextSnapshot.feed.map((item) => item.id))
-  }
+  }, [])
 
-  async function connect() {
+  const connect = useCallback(async () => {
     try {
       const address = await connectWallet()
       setWalletAddress(address)
@@ -51,9 +39,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       reportError('wallet_connect', error instanceof Error ? error.message : 'unknown')
     }
-  }
+  }, [refreshWithWallet])
 
-  async function refresh() {
+  const refresh = useCallback(async () => {
     if (!walletAddress) return
     try {
       await refreshWithWallet(walletAddress)
@@ -64,14 +52,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
         error instanceof Error ? error.message : 'unknown',
       )
     }
-  }
+  }, [walletAddress, refreshWithWallet])
 
-  function addWatchlistSymbol(symbol: string) {
-    const normalized = symbol.trim().toUpperCase()
-    if (!normalized) return
-    const nextWatchlist = Array.from(new Set([...preferences.watchlist, normalized]))
-    setPreferences((current) => ({ ...current, watchlist: nextWatchlist }))
-  }
+  const addWatchlistSymbol = useCallback(
+    (symbol: string) => {
+      const normalized = symbol.trim().toUpperCase()
+      if (!normalized) return
+      const nextWatchlist = Array.from(
+        new Set([...preferences.watchlist, normalized]),
+      )
+      setPreferences((current) => ({ ...current, watchlist: nextWatchlist }))
+    },
+    [preferences.watchlist],
+  )
 
   useEffect(() => {
     savePreferences(preferences)
@@ -100,16 +93,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       refresh,
       addWatchlistSymbol,
     }),
-    [walletAddress, snapshot, preferences, seenFeedIds],
+    [walletAddress, snapshot, preferences, seenFeedIds, connect, refresh, addWatchlistSymbol],
   )
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>
-}
-
-export function useAppState() {
-  const context = useContext(AppContext)
-  if (!context) {
-    throw new Error('useAppState must be used inside AppProvider')
-  }
-  return context
+  return <AppStateContext.Provider value={value}>{children}</AppStateContext.Provider>
 }
