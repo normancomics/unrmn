@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { appConfig } from '../config/appConfig'
-import { FILE } from '../config/partners'
+import { CardArt } from '../components/CardArt'
 import { useAppState } from '../state/useAppState'
 import { fetchAssets, type DeskAsset } from '../services/utokenDesk'
 import { shortenAddress } from '../lib/format'
@@ -11,7 +11,7 @@ export function GalleryPage() {
   const wholeTokens = Math.floor(snapshot?.tokenHoldings[0]?.balance ?? 0)
 
   useEffect(() => {
-    fetchAssets(40).then(setAssets).catch(() => undefined)
+    fetchAssets(48).then(setAssets).catch(() => undefined)
   }, [])
 
   return (
@@ -19,25 +19,31 @@ export function GalleryPage() {
       <article className="card">
         <h2>µNORMAN layers</h2>
         <p className="meta">
-          Official art from the µToken collection and @uNORMANCOMICS. Cards are
-          generated on-chain layer by layer; this desk shows live token ids + the
-          collection gif until a pixel renderer is ported.
+          Live token ids from the µToken indexer. µToken composes each 49×49 card
+          in their client from on-chain layer chunks — they do not publish a render
+          URL — so the official reveal wall is embedded below and each tile links out.
         </p>
         <p className="meta">
-          Your whole cards: {walletAddress ? wholeTokens : 0} · revealed on indexer:{' '}
-          {assets.length}
+          Your whole cards: {walletAddress ? wholeTokens : 0} · indexer rows: {assets.length}
         </p>
-        <a className="button" href={appConfig.collectionUrl} target="_blank" rel="noreferrer">
-          Open full reveal wall
-        </a>
+      </article>
+      <article className="card wall-wrap">
+        <p className="eyebrow">official reveal wall</p>
+        <iframe className="reveal-wall" title="µNORMAN collection" src={appConfig.collectionUrl} />
       </article>
       <div className="gallery-grid">
         {assets.map((asset) => (
-          <article key={asset.assetId} className="card gallery-item">
-            <img src={FILE.logo} alt={`µNORMAN #${asset.assetId}`} />
+          <a
+            key={asset.assetId}
+            className="card gallery-item"
+            href={appConfig.collectionUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <CardArt assetId={asset.assetId} />
             <h4>#{asset.assetId}</h4>
             <p className="meta">{shortenAddress(asset.owner)}</p>
-          </article>
+          </a>
         ))}
       </div>
     </section>
