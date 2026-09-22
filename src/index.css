@@ -1,0 +1,165 @@
+:root {
+  font-family: Inter, system-ui, sans-serif;
+  color: #f6f6f6;
+  background: #09090f;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: radial-gradient(circle at top, #1b1f3b, #09090f 40%);
+}
+
+a {
+  color: #89c6ff;
+}
+
+#root {
+  width: 100%;
+}
+
+.app-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #bca8ff;
+}
+
+.top-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.nav-link {
+  color: #d8d8ea;
+  text-decoration: none;
+  border: 1px solid #3d3e55;
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+}
+
+.nav-link.active {
+  border-color: #bca8ff;
+  color: #fff;
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.card,
+.hero-card {
+  border: 1px solid #373852;
+  border-radius: 16px;
+  padding: 1rem;
+  background: rgba(15, 16, 25, 0.85);
+}
+
+.hero-card {
+  background: linear-gradient(135deg, rgba(78, 58, 145, 0.8), rgba(15, 16, 25, 0.95));
+}
+
+.button {
+  border: 1px solid #62689f;
+  border-radius: 10px;
+  background: #242743;
+  color: #fff;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.gallery-item img {
+  width: 100%;
+  border-radius: 8px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.list {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.meta {
+  color: #a8abca;
+}
+
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+input {
+  border: 1px solid #3f4263;
+  border-radius: 8px;
+  background: #0f1121;
+  color: #fff;
+  padding: 0.45rem 0.6rem;
+}
+
+.status {
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.status.ok {
+  border: 1px solid #389674;
+  background: rgba(56, 150, 116, 0.12);
+}
+
+.status.warn {
+  border: 1px solid #b88d42;
+  background: rgba(184, 141, 66, 0.12);
+}
+
+.matrix {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.matrix th,
+.matrix td {
+  text-align: left;
+  border-bottom: 1px solid #2f3148;
+  padding: 0.45rem 0.25rem;
+}
