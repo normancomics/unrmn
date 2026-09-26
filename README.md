@@ -34,3 +34,7 @@ Optional Vite environment variables:
 - `VITE_ENABLE_YIELD` = `true | false`
 
 All transaction-capable surfaces remain gated unless feature flags are enabled and matching contracts are marked as verified.
+
+## Contact
+
+Project email: unrmn@tutamail.com
